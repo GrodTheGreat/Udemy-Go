@@ -59,7 +59,7 @@ Embark on your journey to mastering Go. Enroll now and transform your career wit
 - Basic programming experience (with any language, doesn't matter) is strongly recommended
 - NO prior Go knowledge is assumed
 
-#### Who this course is for:
+#### Who this course is for
 
 - Beginner Go developers who want to learn the language in great depth
 - Experienced Go developers who need a refresher
