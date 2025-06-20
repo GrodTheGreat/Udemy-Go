@@ -10,14 +10,9 @@ const inflationRate = 2.5
 func main() {
 	var investmentAmount, expectedReturnRate, years float64
 
-	fmt.Print("Investment Amount: ")
-	fmt.Scan(&investmentAmount)
-
-	fmt.Print("Expected Return Rate: ")
-	fmt.Scan(&expectedReturnRate)
-
-	fmt.Print("Years Invested: ")
-	fmt.Scan(&years)
+	investmentAmount = outputText("Investment Amount: ")
+	expectedReturnRate = outputText("Expected Return Rate: ")
+	years = outputText("Years Invested: ")
 
 	futureValue, realFutureValue := calculateFutureValues(investmentAmount, expectedReturnRate, years)
 
@@ -30,9 +25,12 @@ func main() {
 	fmt.Print(formattedFV, formattedRFV)
 }
 
-func outputText(text string, value float64) {
+func outputText(text string) float64 {
 	fmt.Print(text)
+	var value float64
 	fmt.Scan(&value)
+
+	return value
 }
 
 func calculateFutureValues(investmentAmount, expectedReturnRate, years float64) (float64, float64) {
