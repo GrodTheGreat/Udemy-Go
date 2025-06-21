@@ -41,11 +41,7 @@ func main() {
 	fmt.Println("Welcome to Go Bank!")
 Loop:
 	for {
-		fmt.Println("What do you want to do?")
-		fmt.Println("1. Check balance")
-		fmt.Println("2. Deposit")
-		fmt.Println("3. Withdraw")
-		fmt.Println("4. Exit")
+		presentOptions()
 
 		var choice int
 		fmt.Print("Enter choice: ")
