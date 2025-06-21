@@ -1,37 +1,15 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"os"
-	"strconv"
+
+	"bank/fileops"
 )
 
 const accountBalanceFile string = "balance.txt"
-const defaultBalance float64 = 1_000
-
-func writeBalanceToFile(balance float64) {
-	balanceText := fmt.Sprint(balance)
-	os.WriteFile(accountBalanceFile, []byte(balanceText), 0644)
-}
-
-func getBalanceFromFile() (float64, error) {
-	data, err := os.ReadFile(accountBalanceFile)
-	if err != nil {
-		return defaultBalance, errors.New("failed to find balance.txt")
-	}
-
-	balanceText := string(data)
-	balance, err := strconv.ParseFloat(balanceText, 64)
-	if err != nil {
-		return defaultBalance, errors.New("failed to parse stored balance")
-	}
-
-	return balance, nil
-}
 
 func main() {
-	accountBalance, err := getBalanceFromFile()
+	accountBalance, err := fileops.GetFloatFromFile(accountBalanceFile)
 	if err != nil {
 		fmt.Println("ERROR")
 		fmt.Println(err)
@@ -60,7 +38,7 @@ Loop:
 				continue
 			}
 			accountBalance += depositAmount
-			writeBalanceToFile(accountBalance)
+			fileops.WriteFloatToFile(accountBalanceFile, accountBalance)
 			fmt.Println("Balance updated: ", accountBalance)
 		case 3:
 			fmt.Print("Withdraw amount: ")
@@ -76,7 +54,7 @@ Loop:
 			}
 			accountBalance -= withdrawAmount
 			fmt.Println("Balance updated: ", accountBalance)
-			writeBalanceToFile(accountBalance)
+			fileops.WriteFloatToFile(accountBalanceFile, accountBalance)
 		case 4:
 			fmt.Println("Goodbye!")
 			break Loop
