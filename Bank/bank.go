@@ -1,11 +1,45 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strconv"
+)
+
+const accountBalanceFile string = "balance.txt"
+const defaultBalance float64 = 1_000
+
+func writeBalanceToFile(balance float64) {
+	balanceText := fmt.Sprint(balance)
+	os.WriteFile(accountBalanceFile, []byte(balanceText), 0644)
+}
+
+func getBalanceFromFile() (float64, error) {
+	data, err := os.ReadFile(accountBalanceFile)
+	if err != nil {
+		return defaultBalance, errors.New("failed to find balance.txt")
+	}
+
+	balanceText := string(data)
+	balance, err := strconv.ParseFloat(balanceText, 64)
+	if err != nil {
+		return defaultBalance, errors.New("failed to parse stored balance")
+	}
+
+	return balance, nil
+}
 
 func main() {
-	var accountBalance float64 = 1_000
+	accountBalance, err := getBalanceFromFile()
+	if err != nil {
+		fmt.Println("ERROR")
+		fmt.Println(err)
+		fmt.Println("-----------")
+	}
 
 	fmt.Println("Welcome to Go Bank!")
+Loop:
 	for {
 		fmt.Println("What do you want to do?")
 		fmt.Println("1. Check balance")
@@ -17,10 +51,11 @@ func main() {
 		fmt.Print("Enter choice: ")
 		fmt.Scan(&choice)
 
-		if choice == 1 {
+		switch choice {
+		case 1:
 			var message string = fmt.Sprintf("Your balance is %.2f", accountBalance)
 			fmt.Println(message)
-		} else if choice == 2 {
+		case 2:
 			fmt.Print("Your deposit: ")
 			var depositAmount float64
 			fmt.Scan(&depositAmount)
@@ -29,7 +64,9 @@ func main() {
 				continue
 			}
 			accountBalance += depositAmount
-		} else if choice == 3 {
+			writeBalanceToFile(accountBalance)
+			fmt.Println("Balance updated: ", accountBalance)
+		case 3:
 			fmt.Print("Withdraw amount: ")
 			var withdrawAmount float64
 			fmt.Scan(&withdrawAmount)
@@ -43,11 +80,13 @@ func main() {
 			}
 			accountBalance -= withdrawAmount
 			fmt.Println("Balance updated: ", accountBalance)
-		} else if choice == 4 {
+			writeBalanceToFile(accountBalance)
+		case 4:
 			fmt.Println("Goodbye!")
-			break
-		} else {
+			break Loop
+		default:
 			fmt.Println("Invalid choice")
 		}
+		fmt.Println("")
 	}
 }
