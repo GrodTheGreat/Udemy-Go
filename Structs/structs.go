@@ -6,7 +6,16 @@ import (
 	usr "example.com/structs/user"
 )
 
+type str string
+
+func (text str) log() {
+	fmt.Println(text)
+}
+
 func main() {
+	var name str = "John"
+	name.log()
+
 	userFirstName := getUserData("Please enter your first name: ")
 	userLastName := getUserData("Please enter your last name: ")
 	userBirthdate := getUserData("Please enter your birthdate (MM/DD/YYYY): ")
