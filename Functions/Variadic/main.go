@@ -3,8 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	sum := sumup(1, 10, 15, 40, -15)
+	sum := sumup(1, 10, 15, 40, -5)
 	fmt.Println(sum)
+
+	numbers := []int{1, 10, 15}
+	anotherSum := sumup(1, numbers...)
+	fmt.Println(anotherSum)
 }
 
 func sumup(startingVal int, numbers ...int) int {
