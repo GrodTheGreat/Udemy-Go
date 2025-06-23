@@ -21,6 +21,10 @@ func main() {
 
 	quadrupled := transformNumbers(&numbers, func(num int) int { return num * 4 })
 	fmt.Println(quadrupled)
+
+	quintuple := createTransformer(5)
+	quintupled := transformNumbers(&numbers, quintuple)
+	fmt.Println(quintupled)
 }
 
 type transformFn = func(int) int
@@ -48,4 +52,10 @@ func double(number int) int {
 
 func triple(number int) int {
 	return number * 3
+}
+
+func createTransformer(factor int) transformFn {
+	return func(number int) int {
+		return number * factor
+	}
 }
