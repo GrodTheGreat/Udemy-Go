@@ -18,6 +18,9 @@ func main() {
 	transformedNumbers2 := transformNumbers(&numbers, trnsFn2)
 
 	fmt.Println(transformedNumbers, transformedNumbers2)
+
+	quadrupled := transformNumbers(&numbers, func(num int) int { return num * 4 })
+	fmt.Println(quadrupled)
 }
 
 type transformFn = func(int) int
