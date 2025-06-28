@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 )
 
@@ -17,6 +18,7 @@ func (fm *FileManager) ReadLines() ([]string, error) {
 	if err != nil {
 		return nil, errors.New("failed to open file")
 	}
+	defer checkClose(file, &err)
 
 	scanner := bufio.NewScanner(file)
 
@@ -26,13 +28,10 @@ func (fm *FileManager) ReadLines() ([]string, error) {
 	}
 	err = scanner.Err()
 	if err != nil {
-		file.Close()
 		return nil, errors.New("failed to read line in file")
 	}
 
-	file.Close()
-
-	return lines, nil
+	return lines, err
 }
 
 func (fm *FileManager) WriteResult(data any) error {
@@ -40,16 +39,25 @@ func (fm *FileManager) WriteResult(data any) error {
 	if err != nil {
 		return errors.New("failed to create file")
 	}
+	defer checkClose(file, &err)
 
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(data)
 	if err != nil {
-		file.Close()
 		return errors.New("failed to convert data to JSON")
 	}
 
-	file.Close()
-	return nil
+	return err
+}
+
+func checkClose(f *os.File, err *error) {
+	if closeErr := f.Close(); closeErr != nil {
+		if *err != nil {
+			fmt.Println(*err)
+		} else {
+			*err = closeErr
+		}
+	}
 }
 
 func New(inputPath, outputPath string) *FileManager {
