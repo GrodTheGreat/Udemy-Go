@@ -87,6 +87,12 @@ WHERE id = ?
 	return &event, nil
 }
 
-func New() *Event {
-	return &Event{}
+func New(name, description, location string, datetime time.Time, userID int) *Event {
+	return &Event{
+		Name:        name,
+		Description: description,
+		Location:    location,
+		DateTime:    datetime,
+		UserID:      userID,
+	}
 }
