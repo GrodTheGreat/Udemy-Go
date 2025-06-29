@@ -26,7 +26,7 @@ func createTables() {
 CREATE TABLE IF NOT EXISTS user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	email TEXT NOT NULL UNIQUE,
-	passwordHash TEXT NOT NULL
+	password_hash TEXT NOT NULL
 )
 `
 	_, err := DB.Exec(createUserTable)

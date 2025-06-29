@@ -2,28 +2,29 @@ package models
 
 import (
 	"rest/db"
+	"rest/utils"
 	"time"
 )
 
 type Event struct {
-	ID          int64
-	Name        string    `binding:"required"`
-	Description string    `binding:"required"`
-	Location    string    `binding:"required"`
-	DateTime    time.Time `binding:"required"`
-	UserID      int
+	ID          int64     `json:"id"`
+	Name        string    `binding:"required" json:"name"`
+	Description string    `binding:"required" json:"description"`
+	Location    string    `binding:"required" json:"location"`
+	DateTime    time.Time `binding:"required" json:"datetime"`
+	UserID      int       `json:"userId"`
 }
 
 func (event *Event) Save() error {
 	query := `
-INSERT INTO events(name, description, location, datetime, user_id)
+INSERT INTO event(name, description, location, datetime, user_id)
 VALUES(?, ?, ?, ?, ?)
 `
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer utils.CheckClose(stmt, &err)
 
 	result, err := stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.UserID)
 	if err != nil {
@@ -43,13 +44,13 @@ VALUES(?, ?, ?, ?, ?)
 func GetAllEvents() ([]Event, error) {
 	query := `
 SELECT id, name, description, location, datetime, user_id
-FROM events
+FROM event
 `
 	rows, err := db.DB.Query(query)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer utils.CheckClose(rows, &err)
 
 	var events []Event
 	var rawDateTime string
@@ -71,7 +72,7 @@ FROM events
 func GetEventById(id int64) (*Event, error) {
 	query := `
 SELECT id, name, description, location, datetime, user_id
-FROM events
+FROM event
 WHERE id = ?
 `
 	row := db.DB.QueryRow(query, id)
@@ -89,7 +90,7 @@ WHERE id = ?
 
 func (event *Event) Update() error {
 	query := `
-UPDATE events
+UPDATE event
 SET name = ?, description = ?, location = ?, datetime = ?, user_id = ?
 WHERE id = ?
 `
@@ -97,7 +98,7 @@ WHERE id = ?
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer utils.CheckClose(stmt, &err)
 
 	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.UserID, event.ID)
 	if err != nil {
@@ -108,14 +109,14 @@ WHERE id = ?
 
 func (event *Event) Delete() error {
 	query := `
-DELETE FROM events
+DELETE FROM event
 WHERE id = ?
 `
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer utils.CheckClose(stmt, &err)
 
 	_, err = stmt.Exec(event.ID)
 	if err != nil {
