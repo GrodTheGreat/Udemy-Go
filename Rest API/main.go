@@ -6,14 +6,16 @@ import (
 	"net/http"
 	"rest/db"
 	"rest/models"
+	"strconv"
 )
 
 func main() {
 	db.InitDB()
 	server := gin.Default()
 
-	server.GET("/events", getEvents)
 	server.POST("/events", createEvent)
+	server.GET("/events", getEvents)
+	server.GET("/events/:id", getEvent)
 
 	log.Fatal(server.Run(":8080"))
 }
@@ -45,4 +47,21 @@ func createEvent(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, gin.H{"message": "Event created!", "event": event})
+}
+
+func getEvent(context *gin.Context) {
+	id, err := strconv.ParseInt(context.Param("id"), 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid id, could not parse id"})
+		return
+	}
+
+	event, err := models.GetEventById(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch event. Try again later"})
+		log.Fatal(err)
+		return
+	}
+
+	context.JSON(http.StatusOK, event)
 }

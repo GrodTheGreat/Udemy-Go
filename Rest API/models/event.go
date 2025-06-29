@@ -67,6 +67,26 @@ FROM events
 
 	return events, nil
 }
+
+func GetEventById(id int64) (*Event, error) {
+	query := `
+SELECT id, name, description, location, datetime, user_id
+FROM events
+WHERE id = ?
+`
+	row := db.DB.QueryRow(query, id)
+
+	var event Event
+	var rawDateTime string
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &rawDateTime, &event.UserID)
+	if err != nil {
+		return nil, err
+	}
+	event.DateTime, err = time.Parse(time.RFC3339, rawDateTime)
+
+	return &event, nil
+}
+
 func New() *Event {
 	return &Event{}
 }
