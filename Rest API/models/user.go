@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"rest/db"
 	"rest/utils"
 )
@@ -43,6 +44,26 @@ VALUES (?, ?)
 	}
 
 	user.ID = userId
+
+	return nil
+}
+
+func (user *User) ValidateCredentials(password string) error {
+	query := `SELECT password_hash FROM user WHERE email = ? LIMIT 1`
+	row := db.DB.QueryRow(query, user.Email)
+
+	var retrievedPasswordHash string
+	err := row.Scan(&retrievedPasswordHash)
+	if err != nil {
+		return errors.New("invalid credentials")
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(retrievedPasswordHash, password)
+	if !passwordIsValid {
+		return errors.New("invalid credentials")
+	}
+
+	user.PasswordHash = retrievedPasswordHash
 
 	return nil
 }

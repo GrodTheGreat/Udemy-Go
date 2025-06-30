@@ -12,7 +12,7 @@ func getEvents(context *gin.Context) {
 	events, err := models.GetAllEvents()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch events. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 	context.JSON(http.StatusOK, events)
@@ -23,7 +23,7 @@ func createEvent(context *gin.Context) {
 	err := context.ShouldBindJSON(&event)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -47,7 +47,7 @@ func getEvent(context *gin.Context) {
 	event, err := models.GetEventById(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch event. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -64,7 +64,7 @@ func updateEvent(context *gin.Context) {
 	_, err = models.GetEventById(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch event. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -72,7 +72,7 @@ func updateEvent(context *gin.Context) {
 	err = context.ShouldBindJSON(&updatedEvent)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -80,7 +80,7 @@ func updateEvent(context *gin.Context) {
 	err = updatedEvent.Update()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update event. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
@@ -96,14 +96,14 @@ func deleteEvent(context *gin.Context) {
 	event, err := models.GetEventById(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to fetch event. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
 	err = event.Delete()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to delete event. Try again later"})
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
