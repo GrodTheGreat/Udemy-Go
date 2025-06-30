@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"rest/models"
-	"rest/utils"
 	"strconv"
 )
 
@@ -20,24 +19,15 @@ func getEvents(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	token := context.Request.Header.Get("Authorization")
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized"})
-		return
-	}
-	_, userId, err := utils.VerifyToken(token)
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized"})
-		return
-	}
-
 	var event models.Event
-	err = context.ShouldBindJSON(&event)
+	err := context.ShouldBindJSON(&event)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data"})
 		log.Println(err)
 		return
 	}
+
+	userId := context.GetInt64("userId")
 
 	event.UserID = userId
 	err = event.Save()
