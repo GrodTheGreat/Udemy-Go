@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"rest/models"
+	"rest/utils"
 )
 
 func signup(context *gin.Context) {
@@ -53,6 +54,12 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "User login successful"})
+	token, err := utils.GenerateToken(user.ID, user.Email)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "User login successful", "token": token})
 
 }

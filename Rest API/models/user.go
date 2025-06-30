@@ -49,11 +49,11 @@ VALUES (?, ?)
 }
 
 func (user *User) ValidateCredentials(password string) error {
-	query := `SELECT password_hash FROM user WHERE email = ? LIMIT 1`
+	query := `SELECT id, password_hash FROM user WHERE email = ? LIMIT 1`
 	row := db.DB.QueryRow(query, user.Email)
 
 	var retrievedPasswordHash string
-	err := row.Scan(&retrievedPasswordHash)
+	err := row.Scan(&user.ID, &retrievedPasswordHash)
 	if err != nil {
 		return errors.New("invalid credentials")
 	}
