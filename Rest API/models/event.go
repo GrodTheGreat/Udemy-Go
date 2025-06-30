@@ -126,6 +126,21 @@ WHERE id = ?
 	return nil
 }
 
+func (event *Event) Register(userId int64) error {
+	query := `INSERT INTO registration (event_id, user_id)
+VALUES (?, ?)
+`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer utils.CheckClose(stmt, &err)
+
+	_, err = stmt.Exec(event.ID, userId)
+
+	return err
+}
+
 func New(name, description, location string, datetime time.Time, userID int64) *Event {
 	return &Event{
 		Name:        name,
