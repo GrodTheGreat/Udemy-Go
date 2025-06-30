@@ -12,7 +12,7 @@ type Event struct {
 	Description string    `binding:"required" json:"description"`
 	Location    string    `binding:"required" json:"location"`
 	DateTime    time.Time `binding:"required" json:"datetime"`
-	UserID      int       `json:"userId"`
+	UserID      int64     `json:"userId"`
 }
 
 func (event *Event) Save() error {
@@ -126,7 +126,7 @@ WHERE id = ?
 	return nil
 }
 
-func New(name, description, location string, datetime time.Time, userID int) *Event {
+func New(name, description, location string, datetime time.Time, userID int64) *Event {
 	return &Event{
 		Name:        name,
 		Description: description,
