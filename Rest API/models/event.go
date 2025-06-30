@@ -141,6 +141,21 @@ VALUES (?, ?)
 	return err
 }
 
+func (event *Event) CancelRegistration(userId int64) error {
+	query := `DELETE FROM registration
+WHERE event_id = ? AND user_id = ?
+`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer utils.CheckClose(stmt, &err)
+
+	_, err = stmt.Exec(event.ID, userId)
+
+	return err
+}
+
 func New(name, description, location string, datetime time.Time, userID int64) *Event {
 	return &Event{
 		Name:        name,
